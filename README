@@ -1,0 +1,142 @@
+a. Ti-Cheng Lin
+
+b. 6930694544
+
+c. What I have done in the project
+
+   1. I read the Beej's Guide to network programming and review the EE450 Lecture 11.
+   2. I code the TCP connection first and then do the UDP connection after.
+   3. I test and debug the code with provided database_a and database_b.
+   4. I write the Makefile and Readme file.
+   5. I compress all the files and submit to the dropbox.
+
+d. What my code file does
+   
+   client.c
+   1. Create a client TCP socket. 
+   2. Connect to the AWS server socket.
+   3. Send the input argument to the AWS server.
+   4. Receive the result from the AWS.
+   5. Close the client TCP socket.
+
+   monitor.c
+   1. Create a client TCP socket.
+   2. Connect to the AWS server socket.
+   3. Receive the client input argument from the AWS server.
+   4. Receive the results from the AWS.
+   5. Close the client TCP socket.
+
+   aws.c
+   1. Create a TCP server socket for the client.
+   2. Bind the port number to the TCP server socket for the client.
+   3. Create a TCP server socket for the monitor.
+   4. Bind the port number to the TCP server socket for the monitor.
+   5. Listen to the connection from the client.
+   6. Listen to the connection from the monitor.
+   7. Accept the connection from the client.
+   8. Accept the connection from the monitor.
+   9. Receive the input arguments from the client by child TCP socket for the client.
+  10. Send the input arguments to the monitor by child TCP socket for the monitor.
+  11. Create a UDP client socket.
+  12. Send the link ID to the ServerA.
+  13. Receive the finding result from the ServerA.
+  14. Send the link ID to the ServerB.
+  15. Receive the finding result from the ServerB.
+  16. If find no match on both serverA and serverB, send no match information to the client with child TCP socket for the client.
+  17. If find no match no both serverA and serverB, send no match information to the monitor with child TCP socket for the monitor.
+  18. If find a match, send the input arguments and link information to the serverC.
+  19. Receive the calculated results from the serverC.
+  20. Send the delay information to the client by the child TCP socket for the client.
+  21. Send the whole calculated results to the monitor by the child TCP socket for the monitor.
+  22. Close all the sockets.
+
+   serverA.c
+   1. Create a server UDP socket.
+   2. Bind the port number to the UDP server socket.
+   3. Receive the link ID from the AWS.
+   4. Read the database_a.csv file and find the link ID.
+   5. Send the finding result and data to the AWS.
+   6. Close the UDP server socket.
+
+   serverB.c
+   1. Create a server UDP socket.
+   2. Bind the port number to the UDP server socket.
+   3. Receive the link ID from the AWS.
+   4. Read the database_b.csv file and find the link ID.
+   5. Send the finding result and data to the AWS.
+   6. Close the UDP server socket.
+
+   serverC.c
+   1. Create a UDP server socket.
+   2. Bind the port number to the UDP server socket.
+   3. Receive the input argument and found link information from the AWS.
+   4. Calculate the results.
+   5. Send the calculated results to the AWS.
+   6. Close the UDP server socket.
+
+e. The fomat of all the messages exchanged
+
+   client
+   1. The client is up and running.
+   2. The client sent ID=<LINK_ID>, size=<SIZE>, and power=<POWER> to AWS.
+   3. The delay for link is <DELAY>ms.
+   4. Found no matches for link <LINK_ID>.
+
+   monitor
+   1. The monitor is up and running.
+   2. The monitor received link ID=<LINK_ID>, size=<SIZE>, and power=<POWER> from the AWS.
+   3. The result for link <LINK_ID>:
+      Tt = <Transmission Time>ms,
+      Tp = <Propagation Time>ms,
+      Delay = <Delay>ms.
+   4. Found no matches for link <LINK_ID>.
+
+   aws
+   1. The AWS is up and running.
+   2. The AWS received link ID=<LINK_ID>, size=<SIZE>, and power=<POWER> from the client using TCP over port <port number>.
+   3. The AWS sent link ID=<LINK_ID>, size=<SIZE>, and power=<POWER> to the monitor using TCP over port <port number>.
+   4. The AWS sent link ID=<LINK_ID> to Backend-Server <A> using UDP over port <port number>.
+   5. The AWS sent link ID=<LINK_ID> to Backend-Server <B> using UDP over port <port number>.
+   6. The AWS received <1> matches from Backend-Server <A> using UDP over port <port number>.
+   7. The AWS received <0> matches from Backend-Server <A> using UDP over port <port number>.
+   8. The AWS received <1> matches from Backend-Server <B> using UDP over port <port number>.
+   9. The AWS received <0> matches from Backend-Server <B> using UDP over port <port number>.
+  10. The AWS sent link ID=<LINK_ID>, size=<SIZE>, power=<POWER>, and link information to Backend-Server C using UDP over port <port number>.
+  11. The AWS received outputs from Backend-Server C using UDP over port <port number>.
+  12. The AWS sent delay=<Delay>ms to the client using TCP over port <port number>.
+  13. The AWS sent detailed results to the monitor using TCP over port <port number>.
+  14. The AWS sent No Match to the monitor and the client using TCP over ports<port number 1> and <port number 2>, respectively.
+
+   serverA
+   1. The Server A is up and running using UDP on port <port number>.
+   2. The Server A received input<LINK_ID>.
+   3. The Server A has found <1> match.
+   4. The Server A has found <0> match.
+   5. The Server A finished sending the output to AWS.
+
+   serverB
+   1. The Server B is up and running using UDP on port <port number>.
+   2. The Server B received input<LINK_ID>.
+   3. The Server B has found <1> match.
+   4. The Server B has found <0> match.
+   5. The Server B finished sending the output to AWS.
+
+   serverC
+   1. The Server C is up and running using UDP on port <port number>.
+   2. The Server C received link information of link <LINK_ID>, file size <SIZE>, and signal power <POWER>.
+   3. The Server C finished the calculation for link <LINK_ID>.
+   4. The Server C finished sending the output to AWS.
+
+g. Any idiosyncrasy
+
+   Either clients or servers socket API functions get an return error is handled, an "Error!" stdout message will print on the terminal.
+
+h. Reused code
+
+   1. I write in-line comments when create the socket descriptor credit from the Beej's programming guide page 19 the old code.
+   2. I write in-line comments when create UDP socket credit from the Beej's programming guide page 29, 30.
+   3. I write in-line comments when create the TCP server socket credit from the Beej's programming guide page 26.
+
+
+
+
